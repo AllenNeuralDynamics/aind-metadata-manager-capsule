@@ -1,7 +1,9 @@
 """ top level run script """
 import argparse
+import datetime
 import json
 from pathlib import Path
+
 
 from aind_data_schema.core.processing import (DataProcess, PipelineProcess,
                                               Processing)
@@ -17,8 +19,7 @@ def run():
     parser = argparse.ArgumentParser(
         description="Pipeline Processing Metadata Aggregator"
         )
-    
-    #add verbose argument
+
     parser.add_argument(
         "--verbose",
         action="store_true",
@@ -87,11 +88,29 @@ def run():
     for file in data_process_files:
         if args.verbose:
             print(file)
-            
+
         with open(file) as f:
             data_processes.append(
                 DataProcess.model_validate(json.load(f))
                 )
+
+    # Add data_process for this capsule
+    data_processes.append(
+        DataProcess(
+            name="Pipeline Processing Metadata Aggregator",
+            software_version=__version__,
+            start_date_time=datetime.datetime.now(),
+            end_date_time=datetime.datetime.now(),
+            input_location=args.input_dir,
+            output_location=args.output_dir,
+            code_url="https://github.com/AllenNeuralDynamics/aind-pipeline-processing-metadata-aggregator/tree/main", # noqa
+            code_version=__version__,
+            parameters=args.__dict__,
+            outputs={},
+            notes="",
+            resources=None
+        )
+    )
 
     processing = Processing(
         processing_pipeline=PipelineProcess(
