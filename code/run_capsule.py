@@ -79,7 +79,7 @@ def run():
 
     data_processes = []
 
-    data_process_files = Path(args.input_dir).rglob("*data_process.json")
+    data_process_files = list(Path(args.input_dir).rglob("*data_process.json"))
 
     if args.verbose:
         print(f"Found {len(list(data_process_files))} data_process.json files")
@@ -90,7 +90,7 @@ def run():
             
         with open(file) as f:
             data_processes.append(
-                DataProcess.validate_model_data(json.load(f))
+                DataProcess.model_validate(json.load(f))
                 )
 
     processing = Processing(
