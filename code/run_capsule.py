@@ -4,7 +4,6 @@ import datetime
 import json
 from pathlib import Path
 
-from version import __version__
 from aind_data_schema.core.processing import (DataProcess, PipelineProcess,
                                               Processing, ProcessName)
 
@@ -93,23 +92,6 @@ def run():
             data_processes.append(
                 DataProcess.model_validate(json.load(f))
                 )
-
-    # Add data_process for this capsule
-    data_processes.append(
-        DataProcess(
-            name=ProcessName.OTHER,
-            software_version=__version__,
-            start_date_time=datetime.datetime.now(),
-            end_date_time=datetime.datetime.now(),
-            input_location=args.input_dir,
-            output_location=args.output_dir,
-            code_url="https://github.com/AllenNeuralDynamics/aind-pipeline-processing-metadata-aggregator/tree/main", # noqa
-            parameters=args.__dict__,
-            outputs={},
-            notes="aind-pipeline-processing-metadata-aggregator",
-            resources=None
-        )
-    )
 
     processing = Processing(
         processing_pipeline=PipelineProcess(
