@@ -71,7 +71,13 @@ def run():
                 )
 
     data_processes = []
-    for file in Path(args.input_dir).rglob("*data_process.json"):
+
+    data_process_files = Path(args.input_dir).rglob("*data_process.json")
+
+    print(f"Found {len(list(data_process_files))} data_process.json files")
+
+    for file in data_process_files:
+        print(file)
         with open(file) as f:
             data_processes.append(
                 DataProcess.validate_model_data(json.load(f))
