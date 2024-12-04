@@ -1,18 +1,22 @@
 """ top level run script """
 import argparse
-from aind_data_schema.core.processing import Processing, PipelineProcess, DataProcess
-from pathlib import Path
 import json
+from pathlib import Path
+
+from aind_data_schema.core.processing import (DataProcess, PipelineProcess,
+                                              Processing)
+
 
 def run():
-    """ basic run function """
-    
     """
-    This function finds all files in the '/data' directory with a name like '*data_process.json'
-    It deserializes each into an aind-data-schema DataProcess object, then creates a single pipeline processing.json file
+    This function finds all files in the '/data' directory with name like
+    '*data_process.json'. It deserializes each into an aind-data-schema
+    DataProcess object, then creates a single processing.json file.
     """
 
-    parser = argparse.ArgumentParser(description="Pipeline Processing Metadata Aggregator")
+    parser = argparse.ArgumentParser(
+        description="Pipeline Processing Metadata Aggregator"
+        )
 
     parser.add_argument(
         "--input_dir",
@@ -54,18 +58,24 @@ def run():
 
     args = parser.parse_args()
 
-    # processor_full_name is required. if it is not provided by args, look for processor_full_name.txt in the input directory.
+    # processor_full_name is required. if it is not provided by args,
+    # look for processor_full_name.txt in the input directory.
     if args.processor_full_name is None:
         try:
             with open(f"{args.input_dir}/processor_full_name.txt") as f:
                 args.processor_full_name = f.read().strip()
         except FileNotFoundError:
-            raise ValueError(f"processor_full_name is required. Not found via args or in {args.input_dir}/processor_full_name.txt")
-        
+            raise ValueError(
+                f"processor_full_name not found via args or in \
+                {args.input_dir}/processor_full_name.txt"
+                )
+
     data_processes = []
     for file in Path(args.input_dir).rglob("*data_process.json"):
         with open(file) as f:
-            data_processes.append(DataProcess.validate_model_data(json.load(f)))
+            data_processes.append(
+                DataProcess.validate_model_data(json.load(f))
+                )
 
     processing = Processing(
         processing_pipeline=PipelineProcess(
@@ -79,4 +89,6 @@ def run():
 
     processing.write_standard_file(args.output_dir)
 
-if __name__ == "__main__": run()
+
+if __name__ == "__main__":
+    run()
