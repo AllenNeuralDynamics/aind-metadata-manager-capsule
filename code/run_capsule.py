@@ -1,6 +1,6 @@
 """ top level run script """
 import argparse
-from aind_data_schema import Processing, PipelineProcess, DataProcess
+from aind_data_schema.core.processing import Processing, PipelineProcess, DataProcess
 from pathlib import Path
 import json
 

@@ -1,3 +1,3 @@
-# aind-capsule-template
+# aind-pipeline-processing-metadata-aggregator
 
-Basic structure of a capsule to be customized as needed.
+Aggregator to create a single processing.json for a pipeline. Takes serialized DataProcess objects as input.
