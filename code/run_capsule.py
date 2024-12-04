@@ -17,6 +17,13 @@ def run():
     parser = argparse.ArgumentParser(
         description="Pipeline Processing Metadata Aggregator"
         )
+    
+    #add verbose argument
+    parser.add_argument(
+        "--verbose",
+        action="store_true",
+        help="Print verbose output"
+    )
 
     parser.add_argument(
         "--input_dir",
@@ -74,10 +81,13 @@ def run():
 
     data_process_files = Path(args.input_dir).rglob("*data_process.json")
 
-    print(f"Found {len(list(data_process_files))} data_process.json files")
+    if args.verbose:
+        print(f"Found {len(list(data_process_files))} data_process.json files")
 
     for file in data_process_files:
-        print(file)
+        if args.verbose:
+            print(file)
+            
         with open(file) as f:
             data_processes.append(
                 DataProcess.validate_model_data(json.load(f))
