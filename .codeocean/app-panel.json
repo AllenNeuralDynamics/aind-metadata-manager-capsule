@@ -1,0 +1,15 @@
+{
+	"version": 1,
+	"named_parameters": true,
+	"parameters": [
+		{
+			"id": "COM8gYcuX8LcP37E",
+			"name": "Processor Full Name",
+			"param_name": "processor_full_name",
+			"description": "Described by aind-data-schema PipelineProces.processor_full_name",
+			"type": "text",
+			"value_type": "string",
+			"required": true
+		}
+	]
+}
