@@ -9,6 +9,7 @@
 			"description": "Described by aind-data-schema PipelineProces.processor_full_name",
 			"type": "text",
 			"value_type": "string",
+			"default_value": "Arielle Leon",
 			"required": true
 		},
 		{
