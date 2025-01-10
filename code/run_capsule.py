@@ -2,10 +2,11 @@
 
 import argparse
 import json
-from pathlib import Path
 import shutil
+from pathlib import Path
 
-from aind_data_schema.core.processing import DataProcess, PipelineProcess, Processing
+from aind_data_schema.core.processing import (DataProcess, PipelineProcess,
+                                              Processing)
 
 
 def copy_ancillary_files(args: argparse.Namespace) -> None:
@@ -24,12 +25,12 @@ def str2bool(value):
     """Convert string representations of boolean values to actual booleans"""
     if isinstance(value, bool):
         return value
-    if value.lower() in ('yes', 'true', 't', 'y', '1'):
+    if value.lower() in ("yes", "true", "t", "y", "1"):
         return True
-    elif value.lower() in ('no', 'false', 'f', 'n', '0'):
+    elif value.lower() in ("no", "false", "f", "n", "0"):
         return False
     else:
-        raise argparse.ArgumentTypeError('Boolean value expected.')
+        raise argparse.ArgumentTypeError("Boolean value expected.")
 
 
 def parse_args() -> argparse.Namespace:
@@ -72,9 +73,12 @@ def parse_args() -> argparse.Namespace:
         help="Notes",
     )
 
-    parser.add_argument('--copy-ancillary-files', type=str2bool,
-                      default=False,
-                      help='Boolean flag accepting true/false values')
+    parser.add_argument(
+        "--copy-ancillary-files",
+        type=str2bool,
+        default=False,
+        help="Boolean flag accepting true/false values",
+    )
     return parser.parse_args()
 
 
@@ -126,6 +130,7 @@ def run() -> None:
 
     if args.copy_ancillary_files:
         copy_ancillary_files(args)
+
 
 if __name__ == "__main__":
     run()
