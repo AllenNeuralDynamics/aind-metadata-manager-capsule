@@ -9,7 +9,7 @@ from aind_data_schema.core.processing import (DataProcess, PipelineProcess,
                                               Processing)
 
 
-def copy_ancillary_files(args: argparse.Namespace) -> None:
+def copy_ancillary_files(args: argparse.Namespace) -> None: 
     """
     Copy ancillary files from /data to /results
     """
