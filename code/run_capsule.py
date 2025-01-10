@@ -20,6 +20,18 @@ def copy_ancillary_files(args: argparse.Namespace) -> None:
             print(f"Could not find {file} in {args.input_dir}")
 
 
+def str2bool(value):
+    """Convert string representations of boolean values to actual booleans"""
+    if isinstance(value, bool):
+        return value
+    if value.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif value.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
+
+
 def parse_args() -> argparse.Namespace:
     """
     Parse command line arguments
@@ -60,14 +72,9 @@ def parse_args() -> argparse.Namespace:
         help="Notes",
     )
 
-    parser.add_argument(
-        "--copy-ancillary-files",
-        action="store_true",
-        help=(
-            "Attempt to copy procedures.json,"
-            "subject.json and session.json from /data to /results"
-        ),
-    )
+    parser.add_argument('--copy-ancillary-files', type=str2bool,
+                      default=False,
+                      help='Boolean flag accepting true/false values')
     return parser.parse_args()
 
 
@@ -79,7 +86,6 @@ def run() -> None:
     """
 
     args = parse_args()
-
     # processor_full_name is required. if it is not provided by args,
     # look for processor_full_name.txt in the input directory.
     if args.processor_full_name is None:

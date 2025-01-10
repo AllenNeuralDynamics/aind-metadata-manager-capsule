@@ -10,6 +10,15 @@
 			"type": "text",
 			"value_type": "string",
 			"required": true
+		},
+		{
+			"id": "ZfAbfn5Xm9DVAAW2",
+			"name": "Copy Ancillary Files",
+			"param_name": "copy-ancillary-files",
+			"description": "Attempt to copy procedures.json, sessoin.json and subject.json from /data directory",
+			"type": "text",
+			"value_type": "string",
+			"default_value": "False"
 		}
 	]
 }
