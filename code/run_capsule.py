@@ -35,8 +35,8 @@ def create_derived_data_description(args: argparse.Namespace) -> None:
 
     """
     data_description_fp = Path(args.input_dir) / "data_description.json"
-    with open(data_description_fp):
-        data_description = json.load(data_description_fp)
+    with open(data_description_fp) as j:
+        data_description = json.load(j)
     data_description_upgrader = DataDescriptionUpgrade(
         old_data_description_dict=data_description
     )
