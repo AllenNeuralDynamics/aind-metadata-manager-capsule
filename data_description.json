@@ -1,0 +1,65 @@
+{
+   "creation_time": "2024-12-19T09:15:51-08:00",
+   "data_level": "raw",
+   "data_summary": null,
+   "describedBy": "https://raw.githubusercontent.com/AllenNeuralDynamics/aind-data-schema/main/src/aind_data_schema/core/data_description.py",
+   "funding_source": [
+      {
+         "fundee": "Jerome Lecoq",
+         "funder": {
+            "abbreviation": "NINDS",
+            "name": "National Institute of Neurological Disorders and Stroke",
+            "registry": {
+               "abbreviation": "ROR",
+               "name": "Research Organization Registry"
+            },
+            "registry_identifier": "01s5ya894"
+         },
+         "grant_number": "1U24NS113646-01A1"
+      }
+   ],
+   "group": null,
+   "institution": {
+      "abbreviation": "AIND",
+      "name": "Allen Institute for Neural Dynamics",
+      "registry": {
+         "abbreviation": "ROR",
+         "name": "Research Organization Registry"
+      },
+      "registry_identifier": "04szwah67"
+   },
+   "investigators": [
+      {
+         "abbreviation": null,
+         "name": "Jerome Lecoq",
+         "registry": null,
+         "registry_identifier": null
+      }
+   ],
+   "label": null,
+   "license": "CC-BY-4.0",
+   "modality": [
+      {
+         "abbreviation": "behavior",
+         "name": "Behavior"
+      },
+      {
+         "abbreviation": "behavior-videos",
+         "name": "Behavior videos"
+      },
+      {
+         "abbreviation": "pophys",
+         "name": "Planar optical physiology"
+      }
+   ],
+   "name": "multiplane-ophys_745909_2024-12-19_09-15-51",
+   "platform": {
+      "abbreviation": "multiplane-ophys",
+      "name": "Multiplane optical physiology platform"
+   },
+   "project_name": "OpenScope",
+   "related_data": [],
+   "restrictions": null,
+   "schema_version": "1.0.3",
+   "subject_id": "745909"
+}

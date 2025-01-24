@@ -34,7 +34,7 @@ def create_derived_data_description(args: argparse.Namespace) -> None:
         Command line arguments
 
     """
-    data_description_fp = Path(args.output_dir) / "data_description.json"
+    data_description_fp = Path(args.input_dir) / "data_description.json"
     with open(data_description_fp):
         data_description = json.load(data_description_fp)
     data_description_upgrader = DataDescriptionUpgrade(
