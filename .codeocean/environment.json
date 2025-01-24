@@ -11,6 +11,9 @@
 				{
 					"name": "aind-data-schema",
 					"version": "1.2.0"
+				},
+				{
+					"name": "aind-metadata-upgrader"
 				}
 			],
 			"options": {},
