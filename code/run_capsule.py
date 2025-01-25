@@ -5,11 +5,14 @@ import json
 import shutil
 from pathlib import Path
 
+from aind_data_schema.core.data_description import DerivedDataDescription
 from aind_data_schema.core.processing import (DataProcess, PipelineProcess,
                                               Processing)
+from aind_metadata_upgrader.data_description_upgrade import \
+    DataDescriptionUpgrade
 
 
-def copy_ancillary_files(args: argparse.Namespace) -> None: 
+def copy_ancillary_files(args: argparse.Namespace) -> None:    
     """
     Copy ancillary files from /data to /results
     """
@@ -19,6 +22,29 @@ def copy_ancillary_files(args: argparse.Namespace) -> None:
             shutil.copy(f"{args.input_dir}/{file}", f"{args.output_dir}/{file}")
         except FileNotFoundError:
             print(f"Could not find {file} in {args.input_dir}")
+
+
+def create_derived_data_description(args: argparse.Namespace) -> None:
+    """
+    Create a derived data description
+
+    Parameters
+    ----------
+    args : argparse.Namespace
+        Command line arguments
+
+    """
+    data_description_fp = Path(args.input_dir) / "data_description.json"
+    with open(data_description_fp) as j:
+        data_description = json.load(j)
+    data_description_upgrader = DataDescriptionUpgrade(
+        old_data_description_dict=data_description
+    )
+    data_upgrader = data_description_upgrader.upgrade()
+    derived_data_description = DerivedDataDescription.from_data_description(
+        data_description=data_upgrader, process_name="processed"
+    )
+    derived_data_description.write_standard_file(output_directory=args.output_dir)
 
 
 def str2bool(value):
@@ -43,7 +69,9 @@ def parse_args() -> argparse.Namespace:
 
     parser.add_argument("--verbose", action="store_true", help="Print verbose output")
 
-    parser.add_argument("--input_dir", type=str, default="/data", help="Input directory")
+    parser.add_argument(
+        "--input_dir", type=str, default="/data", help="Input directory"
+    )
 
     parser.add_argument(
         "--output_dir", type=str, default="/results", help="Output directory"
@@ -77,7 +105,14 @@ def parse_args() -> argparse.Namespace:
         "--copy-ancillary-files",
         type=str2bool,
         default=False,
-        help="Boolean flag accepting true/false values",
+        help="Flag to copy ancillary files (procedures.json, subject.json, session.json) to output directory",
+    )
+
+    parser.add_argument(
+        "--derived-data-description",
+        type=str2bool,
+        default=False,
+        help="Create derived data description",
     )
     return parser.parse_args()
 
@@ -130,6 +165,9 @@ def run() -> None:
 
     if args.copy_ancillary_files:
         copy_ancillary_files(args)
+
+    if args.derived_data_description:
+        create_derived_data_description(args)
 
 
 if __name__ == "__main__":

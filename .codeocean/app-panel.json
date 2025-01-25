@@ -19,6 +19,13 @@
 			"description": "Attempt to copy procedures.json, sessoin.json and subject.json from /data directory",
 			"type": "text",
 			"value_type": "string"
+		},
+		{
+			"id": "xdpuEvRVBWd7n0Ri",
+			"name": "Create derived data description",
+			"param_name": "derived-data-description",
+			"type": "text",
+			"value_type": "string"
 		}
 	]
 }
