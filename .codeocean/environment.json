@@ -13,8 +13,17 @@
 					"version": "1.2.0"
 				},
 				{
+					"name": "aind-data-schema-models"
+				},
+				{
 					"name": "aind-metadata-upgrader",
 					"version": "0.0.24"
+				},
+				{
+					"name": "pydantic"
+				},
+				{
+					"name": "pydantic-settings"
 				}
 			],
 			"options": {},
