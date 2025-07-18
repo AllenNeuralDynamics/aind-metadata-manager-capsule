@@ -1,29 +1,30 @@
-""" top level run script """
+"""top level run script"""
 
 import argparse
 import json
 import shutil
 from pathlib import Path
-from pydantic import Field
-from pydantic_settings import BaseSettings
 
 from aind_data_schema.core.data_description import DerivedDataDescription
 from aind_data_schema.core.processing import (DataProcess, PipelineProcess,
                                               Processing)
 from aind_metadata_upgrader.data_description_upgrade import \
     DataDescriptionUpgrade
+from pydantic import Field
+from pydantic_settings import BaseSettings
 
 
 class ProcessSettings(BaseSettings, cli_parse_args=True):
-    """ Command line arguments for the processing aggregator"""
-    verbose: bool = Field(
-        default=False, description="Print verbose output"
-    )
+    """Command line arguments for the processing aggregator"""
+
+    verbose: bool = Field(default=False, description="Print verbose output")
     data_summary: str = Field(
-        default="", description="Data summary file to overwrite in the derived data description"
+        default="",
+        description="Data summary file to overwrite in the derived data description",
     )
     input_dir: str = Field(
-        default="/data", description="Input directory containing data_process.json files"
+        default="/data",
+        description="Input directory containing data_process.json files",
     )
     modality: list = Field(
         default=[], description="Modality to overwrite in the derived data description"
@@ -34,16 +35,12 @@ class ProcessSettings(BaseSettings, cli_parse_args=True):
     processor_full_name: str = Field(
         default="", description="Name of person responsible for processing pipeline"
     )
-    pipeline_version: str = Field(
-        default="", description="Version of the pipeline"
-    )
-    pipeline_url: str = Field(
-        default="", description="URL to the pipeline code"
-    )
+    pipeline_version: str = Field(default="", description="Version of the pipeline")
+    pipeline_url: str = Field(default="", description="URL to the pipeline code")
     note: str = Field(default=None, description="Notes")
 
 
-def copy_ancillary_files(args: argparse.Namespace) -> None:    
+def copy_ancillary_files(args: argparse.Namespace) -> None:
     """
     Copy ancillary files from /data to /results
     """
