@@ -22,8 +22,15 @@
 		},
 		{
 			"id": "xdpuEvRVBWd7n0Ri",
-			"name": "Create derived data description",
-			"param_name": "derived-data-description",
+			"name": "Add modality to derived data description",
+			"param_name": "modality",
+			"type": "text",
+			"value_type": "string"
+		},
+		{
+			"id": "x1W5LCVtEVgXEe01",
+			"name": "Overwrite data summary in the derived data description",
+			"param_name": "data_summary",
 			"type": "text",
 			"value_type": "string"
 		}
