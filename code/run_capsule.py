@@ -1,6 +1,5 @@
 """top level run script"""
 
-import argparse
 import json
 import shutil
 from pathlib import Path
@@ -10,6 +9,7 @@ from aind_data_schema.core.processing import (DataProcess, PipelineProcess,
                                               Processing)
 from aind_metadata_upgrader.data_description_upgrade import \
     DataDescriptionUpgrade
+from aind_data_schema_models.modalities import Modality
 from pydantic import Field
 from pydantic_settings import BaseSettings
 
@@ -26,8 +26,8 @@ class ProcessSettings(BaseSettings, cli_parse_args=True):
         default="/data",
         description="Input directory containing data_process.json files",
     )
-    modality: list = Field(
-        default=[], description="Modality to overwrite in the derived data description"
+    modality: list[str] = Field(
+        default=[], description="Modality(ies) to overwrite in the derived data description"
     )
     output_dir: str = Field(
         default="/results", description="Output directory for processing.json"
@@ -38,18 +38,21 @@ class ProcessSettings(BaseSettings, cli_parse_args=True):
     pipeline_version: str = Field(default="", description="Version of the pipeline")
     pipeline_url: str = Field(default="", description="URL to the pipeline code")
     note: str = Field(default=None, description="Notes")
+    copy_ancillary_files: bool = Field(
+        default=False, description="Copy ancillary files (procedures.json, subject.json, session.json) to output"
+    )
 
 
-def copy_ancillary_files(args: argparse.Namespace) -> None:
+def copy_ancillary_files(settings: ProcessSettings) -> None:
     """
-    Copy ancillary files from /data to /results
+    Copy ancillary files from input_dir to output_dir
     """
     ancillary_files = ["procedures.json", "subject.json", "session.json"]
     for file in ancillary_files:
         try:
-            shutil.copy(f"{args.input_dir}/{file}", f"{args.output_dir}/{file}")
+            shutil.copy(f"{settings.input_dir}/{file}", f"{settings.output_dir}/{file}")
         except FileNotFoundError:
-            print(f"Could not find {file} in {args.input_dir}")
+            print(f"Could not find {file} in {settings.input_dir}")
 
 
 def create_derived_data_description(settings: ProcessSettings) -> None:
@@ -72,7 +75,20 @@ def create_derived_data_description(settings: ProcessSettings) -> None:
     if settings.data_summary:
         data_upgrader.data_summary = settings.data_summary
     if settings.modality:
-        data_upgrader.modality = settings.modality
+        validated_modalities = []
+        for input_modality in settings.modality:
+            modality_found = False
+            for modality_class in Modality.ALL:
+                if input_modality in modality_class().abbreviation:
+                    validated_modalities.append(modality_class)
+                    modality_found = True
+                    break
+            if not modality_found:
+                raise ValueError(
+                    f"Modality '{input_modality}' is not a valid modality. "
+                    f"Valid modalities are: {Modality.ONE_OF}"
+                )
+        data_upgrader.modality = validated_modalities
     derived_data_description = DerivedDataDescription.from_data_description(
         data_description=data_upgrader, process_name="processed"
     )
