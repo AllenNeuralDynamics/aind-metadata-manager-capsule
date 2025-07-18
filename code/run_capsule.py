@@ -7,9 +7,9 @@ from pathlib import Path
 from aind_data_schema.core.data_description import DerivedDataDescription
 from aind_data_schema.core.processing import (DataProcess, PipelineProcess,
                                               Processing)
+from aind_data_schema_models.modalities import Modality
 from aind_metadata_upgrader.data_description_upgrade import \
     DataDescriptionUpgrade
-from aind_data_schema_models.modalities import Modality
 from pydantic import Field
 from pydantic_settings import BaseSettings
 
@@ -27,7 +27,8 @@ class ProcessSettings(BaseSettings, cli_parse_args=True):
         description="Input directory containing data_process.json files",
     )
     modality: list[str] = Field(
-        default=[], description="Modality(ies) to overwrite in the derived data description"
+        default=[],
+        description="Modality(ies) to overwrite in the derived data description",
     )
     output_dir: str = Field(
         default="/results", description="Output directory for processing.json"
@@ -39,7 +40,8 @@ class ProcessSettings(BaseSettings, cli_parse_args=True):
     pipeline_url: str = Field(default="", description="URL to the pipeline code")
     note: str = Field(default=None, description="Notes")
     copy_ancillary_files: bool = Field(
-        default=False, description="Copy ancillary files (procedures.json, subject.json, session.json) to output"
+        default=False,
+        description="Copy ancillary files (procedures.json, subject.json, session.json) to output",
     )
 
 
