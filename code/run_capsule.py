@@ -26,8 +26,8 @@ class ProcessSettings(BaseSettings, cli_parse_args=True):
         default="/data",
         description="Input directory containing data_process.json files",
     )
-    modality: list[str] = Field(
-        default=[],
+    modality: str = Field(
+        default="",
         description="Modality(ies) to overwrite in the derived data description",
     )
     output_dir: str = Field(
@@ -38,7 +38,7 @@ class ProcessSettings(BaseSettings, cli_parse_args=True):
     )
     pipeline_version: str = Field(default="", description="Version of the pipeline")
     pipeline_url: str = Field(default="", description="URL to the pipeline code")
-    note: str = Field(default=None, description="Notes")
+    note: str = Field(default="", description="Notes")
     copy_ancillary_files: bool = Field(
         default=False,
         description="Copy ancillary files (procedures.json, subject.json, session.json) to output",
@@ -78,19 +78,19 @@ def create_derived_data_description(settings: ProcessSettings) -> None:
         data_upgrader.data_summary = settings.data_summary
     if settings.modality:
         validated_modalities = []
-        for input_modality in settings.modality:
-            modality_found = False
-            for modality_class in Modality.ALL:
-                if input_modality in modality_class().abbreviation:
-                    validated_modalities.append(modality_class)
-                    modality_found = True
-                    break
-            if not modality_found:
-                raise ValueError(
-                    f"Modality '{input_modality}' is not a valid modality. "
-                    f"Valid modalities are: {Modality.ONE_OF}"
-                )
-        data_upgrader.modality = validated_modalities
+        modality_found = False
+        for modality_class in Modality.ALL:
+            if settings.modality in modality_class().abbreviation:
+                validated_modalities.append(modality_class())
+                modality_found = True
+                break
+        if not modality_found:
+            raise ValueError(
+                f"Modality '{settings.modality}' is not a valid modality. "
+                f"Valid modalities are: {Modality.ONE_OF}"
+            )
+        
+    data_upgrader.modality = validated_modalities
     derived_data_description = DerivedDataDescription.from_data_description(
         data_description=data_upgrader, process_name="processed"
     )
