@@ -89,7 +89,7 @@ def create_derived_data_description(settings: ProcessSettings) -> None:
                 f"Modality '{settings.modality}' is not a valid modality. "
                 f"Valid modalities are: {Modality.ONE_OF}"
             )
-        
+
     data_upgrader.modality = validated_modalities
     derived_data_description = DerivedDataDescription.from_data_description(
         data_description=data_upgrader, process_name="processed"
