@@ -16,7 +16,7 @@ def copy_ancillary_files(args: argparse.Namespace) -> None:
     """
     Copy ancillary files from /data to /results
     """
-    ancillary_files = ["procedures.json", "subject.json", "session.json"]
+    ancillary_files = ["procedures.json", "subject.json", "session.json", "rig.json"]
     for file in ancillary_files:
         try:
             shutil.copy(f"{args.input_dir}/{file}", f"{args.output_dir}/{file}")
