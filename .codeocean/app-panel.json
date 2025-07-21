@@ -15,7 +15,7 @@
 		{
 			"id": "ZfAbfn5Xm9DVAAW2",
 			"name": "Copy Ancillary Files",
-			"param_name": "copy-ancillary-files",
+			"param_name": "copy_ancillary_files",
 			"description": "Attempt to copy procedures.json, sessoin.json and subject.json from /data directory",
 			"type": "text",
 			"value_type": "string",
@@ -23,8 +23,22 @@
 		},
 		{
 			"id": "xdpuEvRVBWd7n0Ri",
-			"name": "Create derived data description",
-			"param_name": "derived-data-description",
+			"name": "Add modality to derived data description",
+			"param_name": "modality",
+			"type": "text",
+			"value_type": "string"
+		},
+		{
+			"id": "x1W5LCVtEVgXEe01",
+			"name": "Overwrite data summary in the derived data description",
+			"param_name": "data_summary",
+			"type": "text",
+			"value_type": "string"
+		},
+		{
+			"id": "ITzET5lLeQTrZbyH",
+			"name": "Note",
+			"param_name": "note",
 			"type": "text",
 			"value_type": "string",
 			"default_value": "True"
