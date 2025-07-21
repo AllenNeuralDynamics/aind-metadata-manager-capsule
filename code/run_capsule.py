@@ -52,7 +52,7 @@ def copy_ancillary_files(settings: ProcessSettings) -> None:
     settings : ProcessSettings
         Command line arguments
     """
-    ancillary_files = ["procedures.json", "subject.json", "session.json"]
+    ancillary_files = ["procedures.json", "subject.json", "session.json", "rig.json"]
     for file in ancillary_files:
         try:
             shutil.copy(f"{settings.input_dir}/{file}", f"{settings.output_dir}/{file}")

@@ -18,7 +18,8 @@
 			"param_name": "copy_ancillary_files",
 			"description": "Attempt to copy procedures.json, sessoin.json and subject.json from /data directory",
 			"type": "text",
-			"value_type": "string"
+			"value_type": "string",
+			"default_value": "True"
 		},
 		{
 			"id": "xdpuEvRVBWd7n0Ri",
@@ -39,7 +40,8 @@
 			"name": "Note",
 			"param_name": "note",
 			"type": "text",
-			"value_type": "string"
+			"value_type": "string",
+			"default_value": "True"
 		}
 	]
 }
