@@ -5,11 +5,9 @@ import shutil
 from pathlib import Path
 
 from aind_data_schema.core.data_description import DerivedDataDescription
-from aind_data_schema.core.processing import (DataProcess, PipelineProcess,
-                                              Processing)
+from aind_data_schema.core.processing import DataProcess, PipelineProcess, Processing
 from aind_data_schema_models.modalities import Modality
-from aind_metadata_upgrader.data_description_upgrade import \
-    DataDescriptionUpgrade
+from aind_metadata_upgrader.data_description_upgrade import DataDescriptionUpgrade
 from pydantic import Field
 from pydantic_settings import BaseSettings
 
