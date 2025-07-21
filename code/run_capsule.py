@@ -1,4 +1,4 @@
-""" top level run script """
+"""top level run script"""
 
 import argparse
 import json
@@ -12,11 +12,11 @@ from aind_metadata_upgrader.data_description_upgrade import \
     DataDescriptionUpgrade
 
 
-def copy_ancillary_files(args: argparse.Namespace) -> None:    
+def copy_ancillary_files(args: argparse.Namespace) -> None:
     """
     Copy ancillary files from /data to /results
     """
-    ancillary_files = ["procedures.json", "subject.json", "session.json"]
+    ancillary_files = ["procedures.json", "subject.json", "session.json", "rig.json"]
     for file in ancillary_files:
         try:
             shutil.copy(f"{args.input_dir}/{file}", f"{args.output_dir}/{file}")
