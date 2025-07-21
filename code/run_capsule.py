@@ -59,7 +59,10 @@ def copy_ancillary_files(settings: ProcessSettings) -> None:
         try:
             shutil.copy(f"{settings.input_dir}/{file}", f"{settings.output_dir}/{file}")
         except FileNotFoundError:
-            print(f"Could not find {file} in {settings.input_dir}")
+            raise FileNotFoundError(
+                f"Could not find {file} in {settings.input_dir}. "
+                "Ensure the file exists in the input directory."
+            )
 
 
 def create_derived_data_description(settings: ProcessSettings) -> None:
