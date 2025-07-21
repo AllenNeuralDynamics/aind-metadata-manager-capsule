@@ -48,6 +48,11 @@ class ProcessSettings(BaseSettings, cli_parse_args=True):
 def copy_ancillary_files(settings: ProcessSettings) -> None:
     """
     Copy ancillary files from input_dir to output_dir
+
+    Parameters
+    ----------
+    settings : ProcessSettings
+        Command line arguments
     """
     ancillary_files = ["procedures.json", "subject.json", "session.json"]
     for file in ancillary_files:
