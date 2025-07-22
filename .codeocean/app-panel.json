@@ -41,8 +41,7 @@
 			"name": "Note",
 			"param_name": "note",
 			"type": "text",
-			"value_type": "string",
-			"default_value": "True"
+			"value_type": "string"
 		}
 	]
 }
