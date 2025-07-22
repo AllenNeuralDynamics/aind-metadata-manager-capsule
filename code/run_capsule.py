@@ -82,8 +82,8 @@ def create_derived_data_description(settings: ProcessSettings) -> None:
     data_upgrader = data_description_upgrader.upgrade()
     if settings.data_summary:
         data_upgrader.data_summary = settings.data_summary
+    validated_modalities = []
     if settings.modality:
-        validated_modalities = []
         modality_found = False
         for modality_class in Modality.ALL:
             if settings.modality in modality_class().abbreviation:
@@ -95,7 +95,8 @@ def create_derived_data_description(settings: ProcessSettings) -> None:
                 f"Modality '{settings.modality}' is not a valid modality. "
                 f"Valid modalities are: {Modality.ONE_OF}"
             )
-
+    if not validated_modalities:
+        raise ValueError(f"No modality specificed in settings: {settings}")
     data_upgrader.modality = validated_modalities
     derived_data_description = DerivedDataDescription.from_data_description(
         data_description=data_upgrader, process_name="processed"
