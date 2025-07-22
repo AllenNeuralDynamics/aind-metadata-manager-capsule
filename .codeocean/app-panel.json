@@ -26,7 +26,8 @@
 			"name": "Add modality to derived data description",
 			"param_name": "modality",
 			"type": "text",
-			"value_type": "string"
+			"value_type": "string",
+			"default_value": "pophys"
 		},
 		{
 			"id": "x1W5LCVtEVgXEe01",
