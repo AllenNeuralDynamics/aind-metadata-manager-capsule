@@ -10,6 +10,7 @@ from typing import List
 from aind_data_schema.core.data_description import DerivedDataDescription
 from aind_data_schema.core.processing import (DataProcess, PipelineProcess,
                                               Processing)
+from aind_data_schema.core.quality_control import QCEvaluation, QualityControl
 from aind_data_schema_models.modalities import Modality
 from aind_metadata_upgrader.data_description_upgrade import \
     DataDescriptionUpgrade
@@ -62,6 +63,16 @@ class MetadataSettings(BaseSettings, cli_parse_args=True):
     skip_ancillary_files: bool = Field(
         default=False,
         description="Skip copying ancillary files (procedures.json, subject.json, session.json, rig.json)",
+    )
+
+    # Quality control options
+    aggregate_quality_control: bool = Field(
+        default=True,
+        description="Aggregate quality control evaluations from JSON files",
+    )
+    qc_notes: str = Field(
+        default="",
+        description="Notes to include in the quality control metadata",
     )
 
     @field_validator("processor_full_name", mode="before")
@@ -301,19 +312,19 @@ class MetadataManager:
         List[DataProcess]
             List of DataProcess objects found in input directory
         """
+        data_process_jsons = self.collect_json_objects("data_process")
+
         data_processes = []
-        # input_dir is already a Path object
-        data_process_files = list(self.settings.input_dir.rglob("*data_process.json"))
-
-        if self.settings.verbose:
-            logger.info(f"Found {len(data_process_files)} data_process.json files")
-
-        for file_path in data_process_files:
-            if self.settings.verbose:
-                logger.info(f"Processing: {file_path}")
-
-            with open(file_path) as f:
-                data_processes.append(DataProcess.model_validate(json.load(f)))
+        for json_data in data_process_jsons:
+            try:
+                data_process = DataProcess.model_validate(json_data)
+                data_processes.append(data_process)
+                if self.settings.verbose:
+                    logger.info(
+                        f"Added data process: {data_process.name if hasattr(data_process, 'name') else 'unnamed'}"
+                    )
+            except Exception as e:
+                logger.warning(f"Failed to validate data_process JSON: {e}")
 
         return data_processes
 
@@ -347,6 +358,90 @@ class MetadataManager:
 
         return processing
 
+    def collect_json_objects(self, pattern: str) -> List:
+        """
+        Generic function to collect and parse JSON objects from files matching a pattern
+
+        Parameters
+        ----------
+        pattern : str
+            Pattern to search for in filenames (e.g., "data_process", "evaluation")
+
+        Returns
+        -------
+        List
+            List of parsed JSON objects from matching files
+        """
+        json_files = list(self.settings.input_dir.rglob(f"*{pattern}*.json"))
+
+        if self.settings.verbose:
+            logger.info(
+                f"Found {len(json_files)} files matching pattern '*{pattern}*.json'"
+            )
+
+        json_objects = []
+        for file_path in json_files:
+            if self.settings.verbose:
+                logger.info(f"Processing: {file_path}")
+
+            try:
+                with open(file_path, "r") as f:
+                    json_data = json.load(f)
+                    json_objects.append(json_data)
+            except Exception as e:
+                logger.warning(f"Failed to load JSON from {file_path}: {e}")
+
+        return json_objects
+
+    def collect_evaluations(self) -> List[QCEvaluation]:
+        """
+        Collect all QCEvaluation objects from evaluation JSON files
+
+        Returns
+        -------
+        List[QCEvaluation]
+            List of QCEvaluation objects found in input directory
+        """
+        evaluation_jsons = self.collect_json_objects("evaluation")
+
+        evaluations = []
+        for json_data in evaluation_jsons:
+            try:
+                evaluation = QCEvaluation.model_validate(json_data)
+                evaluations.append(evaluation)
+                if self.settings.verbose:
+                    logger.info(
+                        f"Added evaluation: {evaluation.name if hasattr(evaluation, 'name') else 'unnamed'}"
+                    )
+            except Exception as e:
+                logger.warning(f"Failed to validate evaluation JSON: {e}")
+
+        return evaluations
+
+    def create_quality_control_metadata(self) -> QualityControl:
+        """
+        Create QualityControl object with collected evaluations
+
+        Returns
+        -------
+        QualityControl
+            QualityControl object containing all evaluations and notes
+        """
+        evaluations = self.collect_evaluations()
+
+        quality_control = QualityControl(
+            evaluations=evaluations, notes=self.settings.qc_notes
+        )
+
+        if self.settings.verbose:
+            logger.info(
+                f"Created quality control metadata with {len(evaluations)} evaluations"
+            )
+            if self.settings.qc_notes:
+                logger.info(f"Notes: {self.settings.qc_notes}")
+
+        return quality_control
+
 
 def run() -> None:
     """
@@ -357,6 +452,7 @@ def run() -> None:
     2. Creates a Processing object with pipeline metadata
     3. Copies ancillary files by default (unless skipped)
     4. Creates derived data description with optional modality override
+    5. Creates quality control metadata from evaluation JSON files (unless skipped)
     """
     try:
         settings = MetadataSettings()
@@ -391,6 +487,28 @@ def run() -> None:
 
         # Always attempt to create derived data description
         manager.create_derived_data_description()
+
+        # Create quality control metadata (if enabled and evaluations found)
+        if settings.aggregate_quality_control:
+            try:
+                quality_control = manager.create_quality_control_metadata()
+                # Only write if we have evaluations
+                if quality_control.evaluations:
+                    quality_control.write_standard_file(str(settings.output_dir))
+                    if settings.verbose:
+                        logger.info("✓ Written quality_control.json")
+                else:
+                    if settings.verbose:
+                        logger.info(
+                            "No quality control evaluations found - skipping quality_control.json creation"
+                        )
+            except Exception as e:
+                logger.warning(f"Failed to create quality control metadata: {e}")
+        else:
+            if settings.verbose:
+                logger.info(
+                    "Skipping quality control metadata creation (--aggregate_quality_control=False)"
+                )
 
         if settings.verbose:
             logger.info("=== Pipeline completed successfully ===")
