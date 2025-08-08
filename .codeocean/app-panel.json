@@ -4,44 +4,38 @@
 	"parameters": [
 		{
 			"id": "COM8gYcuX8LcP37E",
-			"name": "Processor Full Name",
-			"param_name": "processor_full_name",
-			"description": "Described by aind-data-schema PipelineProces.processor_full_name",
+			"name": "skip_ancillary_files",
+			"param_name": "skip_ancillary_files",
+			"description": "Skip copying of metadata",
 			"type": "text",
-			"value_type": "string",
-			"default_value": "Arielle Leon",
+			"value_type": "integer",
+			"default_value": "0",
 			"required": true
 		},
 		{
 			"id": "ZfAbfn5Xm9DVAAW2",
-			"name": "Copy Ancillary Files",
-			"param_name": "copy_ancillary_files",
-			"description": "Attempt to copy procedures.json, sessoin.json and subject.json from /data directory",
+			"name": "processor_full_name",
+			"param_name": "processor_full_name",
+			"description": "Name of person responsible for the pipeline",
 			"type": "text",
 			"value_type": "string",
-			"default_value": "True"
+			"required": true
 		},
 		{
 			"id": "xdpuEvRVBWd7n0Ri",
-			"name": "Add modality to derived data description",
+			"name": "modality",
 			"param_name": "modality",
+			"description": "Modality to overwrite in the derived data description",
 			"type": "text",
 			"value_type": "string"
 		},
 		{
 			"id": "x1W5LCVtEVgXEe01",
-			"name": "Overwrite data summary in the derived data description",
-			"param_name": "data_summary",
+			"name": "pipeline_version",
+			"param_name": "pipeline_version",
+			"description": "Version of the pipeline - will pull from local if not specified",
 			"type": "text",
 			"value_type": "string"
-		},
-		{
-			"id": "ITzET5lLeQTrZbyH",
-			"name": "Note",
-			"param_name": "note",
-			"type": "text",
-			"value_type": "string",
-			"default_value": "True"
 		}
 	]
 }
