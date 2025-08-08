@@ -36,6 +36,15 @@
 			"description": "Version of the pipeline - will pull from local if not specified",
 			"type": "text",
 			"value_type": "string"
+		},
+		{
+			"id": "0qRtnETvgbJh7x8X",
+			"name": "create_quality_control",
+			"param_name": "create_quality_control",
+			"description": "Create quality control json. Defaults to True",
+			"type": "text",
+			"value_type": "string",
+			"default_value": "0"
 		}
 	]
 }
