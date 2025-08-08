@@ -119,7 +119,9 @@ class MetadataManager:
         """
         if self.settings.skip_ancillary_files:
             if self.settings.verbose:
-                logger.info("Skipping ancillary files copy (--skip_ancillary_files=True)")
+                logger.info(
+                    "Skipping ancillary files copy (--skip_ancillary_files=True)"
+                )
             return
 
         copied_files = []
@@ -143,7 +145,9 @@ class MetadataManager:
                     shutil.copy(source_path, dest_path)
                     copied_files.append(file_name)
                     if self.settings.verbose:
-                        logger.info(f"Copied {file_name} from {source_path} to {dest_path}")
+                        logger.info(
+                            f"Copied {file_name} from {source_path} to {dest_path}"
+                        )
                 except Exception as e:
                     raise FileNotFoundError(
                         f"Error copying {file_name} from {source_path} to {dest_path}: {e}"
@@ -191,11 +195,13 @@ class MetadataManager:
 
         # Use the first match found
         data_description_fp = matching_files[0]
-        
+
         if self.settings.verbose:
             logger.info(f"Found data_description.json at {data_description_fp}")
             if len(matching_files) > 1:
-                logger.info(f"Multiple data_description.json files found, using: {data_description_fp}")
+                logger.info(
+                    f"Multiple data_description.json files found, using: {data_description_fp}"
+                )
 
         try:
             with open(data_description_fp) as f:
@@ -246,6 +252,7 @@ class MetadataManager:
             logger.error(f"Error creating derived data description: {e}")
             if self.settings.verbose:
                 import traceback
+
                 logger.error(traceback.format_exc())
             raise
 
@@ -353,15 +360,15 @@ def run() -> None:
     """
     try:
         settings = MetadataSettings()
-        
+
         # Configure logging based on verbose setting
         log_level = logging.INFO if settings.verbose else logging.WARNING
         logging.basicConfig(
             level=log_level,
-            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-            datefmt='%Y-%m-%d %H:%M:%S'
+            format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+            datefmt="%Y-%m-%d %H:%M:%S",
         )
-        
+
         manager = MetadataManager(settings)
 
         if settings.verbose:
