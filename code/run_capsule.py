@@ -98,7 +98,7 @@ class MetadataManager:
 
     def copy_ancillary_files(self) -> None:
         """
-        Copy ancillary files from input_dir to output_dir
+        Copy ancillary files from input_dir to output_dir using recursive search
 
         Raises
         ------
@@ -112,30 +112,40 @@ class MetadataManager:
 
         copied_files = []
         missing_files = []
+        input_path = Path(self.settings.input_dir)
+        output_path = Path(self.settings.output_dir)
 
-        for file in self.ancillary_files:
-            source_path = Path(self.settings.input_dir) / file
-            dest_path = Path(self.settings.output_dir) / file
-
-            try:
-                if source_path.exists():
+        for file_name in self.ancillary_files:
+            # Use recursive search (rglob) to find the file anywhere in the input directory
+            matching_files = list(input_path.rglob(file_name))
+            
+            if matching_files:
+                # Use the first match found
+                source_path = matching_files[0]
+                dest_path = output_path / file_name
+                
+                try:
+                    # Ensure output directory exists
+                    dest_path.parent.mkdir(parents=True, exist_ok=True)
                     shutil.copy(source_path, dest_path)
-                    copied_files.append(file)
+                    copied_files.append(file_name)
                     if self.settings.verbose:
-                        print(f"Copied {file}")
-                else:
-                    missing_files.append(file)
-                    if self.settings.verbose:
-                        print(f"Warning: {file} not found in {self.settings.input_dir}")
-            except Exception as e:
-                raise FileNotFoundError(
-                    f"Error copying {file} from {source_path} to {dest_path}: {e}"
-                )
+                        print(f"Copied {file_name} from {source_path} to {dest_path}")
+                except Exception as e:
+                    raise FileNotFoundError(
+                        f"Error copying {file_name} from {source_path} to {dest_path}: {e}"
+                    )
+            else:
+                missing_files.append(file_name)
+                if self.settings.verbose:
+                    print(f"Warning: {file_name} not found in {self.settings.input_dir} (searched recursively)")
 
         if self.settings.verbose:
             print(f"Successfully copied {len(copied_files)} ancillary files")
             if missing_files:
                 print(f"Missing files: {missing_files}")
+            if copied_files:
+                print("Copied files placed in output directory root")
 
     def create_derived_data_description(self) -> None:
         """
