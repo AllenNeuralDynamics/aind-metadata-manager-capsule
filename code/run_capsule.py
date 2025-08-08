@@ -4,7 +4,7 @@ import json
 import os
 import shutil
 from pathlib import Path
-from typing import List, Optional
+from typing import List
 
 from aind_data_schema.core.data_description import DerivedDataDescription
 from aind_data_schema.core.processing import (DataProcess, PipelineProcess,
@@ -66,9 +66,15 @@ class MetadataSettings(BaseSettings, cli_parse_args=True):
         """Validate processor_full_name is provided or can be read from file"""
         if not v:
             # Try to get input_dir from the validation info context
-            input_dir_raw = info.data.get("input_dir", "/data") if info.data else "/data"
+            input_dir_raw = (
+                info.data.get("input_dir", "/data") if info.data else "/data"
+            )
             # Ensure input_dir is a Path object
-            input_dir = Path(input_dir_raw) if not isinstance(input_dir_raw, Path) else input_dir_raw
+            input_dir = (
+                Path(input_dir_raw)
+                if not isinstance(input_dir_raw, Path)
+                else input_dir_raw
+            )
             try:
                 processor_file = input_dir / "processor_full_name.txt"
                 if processor_file.exists():
@@ -121,12 +127,12 @@ class MetadataManager:
         for file_name in self.ancillary_files:
             # Use recursive search (rglob) to find the file anywhere in the input directory
             matching_files = list(input_path.rglob(file_name))
-            
+
             if matching_files:
                 # Use the first match found
                 source_path = matching_files[0]
                 dest_path = output_path / file_name
-                
+
                 try:
                     # Ensure output directory exists
                     dest_path.parent.mkdir(parents=True, exist_ok=True)
@@ -141,7 +147,9 @@ class MetadataManager:
             else:
                 missing_files.append(file_name)
                 if self.settings.verbose:
-                    print(f"Warning: {file_name} not found in {self.settings.input_dir} (searched recursively)")
+                    print(
+                        f"Warning: {file_name} not found in {self.settings.input_dir} (searched recursively)"
+                    )
 
         if self.settings.verbose:
             print(f"Successfully copied {len(copied_files)} ancillary files")
@@ -169,7 +177,9 @@ class MetadataManager:
             if self.settings.verbose:
                 print(f"Warning: {message}")
                 print("Skipping derived data description creation")
-                print("To create a derived data description, ensure data_description.json exists in the input directory")
+                print(
+                    "To create a derived data description, ensure data_description.json exists in the input directory"
+                )
             else:
                 print(f"Note: {message} - skipping derived data description creation")
             return
@@ -202,24 +212,31 @@ class MetadataManager:
                 validated_modalities = self._validate_modality(self.settings.modality)
                 data_upgrader.modality = validated_modalities
                 if self.settings.verbose:
-                    print(f"Set modality: {[m.abbreviation for m in validated_modalities]}")
+                    print(
+                        f"Set modality: {[m.abbreviation for m in validated_modalities]}"
+                    )
 
             # Create derived data description
             derived_data_description = DerivedDataDescription.from_data_description(
                 data_description=data_upgrader, process_name="processed"
             )
-            
+
             # Ensure output_directory is a string for the API call
             output_dir_str = str(self.settings.output_dir)
-            derived_data_description.write_standard_file(output_directory=output_dir_str)
+            derived_data_description.write_standard_file(
+                output_directory=output_dir_str
+            )
 
             if self.settings.verbose:
-                print(f"✓ Created derived data description at {output_dir_str}/data_description.json")
-        
+                print(
+                    f"✓ Created derived data description at {output_dir_str}/data_description.json"
+                )
+
         except Exception as e:
             print(f"Error creating derived data description: {e}")
             if self.settings.verbose:
                 import traceback
+
                 traceback.print_exc()
             raise
 
