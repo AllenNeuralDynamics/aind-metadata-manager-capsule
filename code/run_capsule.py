@@ -1,6 +1,7 @@
 """Metadata management script for processing pipeline aggregation"""
 
 import json
+import logging
 import os
 import shutil
 from pathlib import Path
@@ -14,6 +15,9 @@ from aind_metadata_upgrader.data_description_upgrade import \
     DataDescriptionUpgrade
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings
+
+# Set up logging
+logger = logging.getLogger(__name__)
 
 
 class MetadataSettings(BaseSettings, cli_parse_args=True):
@@ -115,7 +119,7 @@ class MetadataManager:
         """
         if self.settings.skip_ancillary_files:
             if self.settings.verbose:
-                print("Skipping ancillary files copy (--skip_ancillary_files=True)")
+                logger.info("Skipping ancillary files copy (--skip_ancillary_files=True)")
             return
 
         copied_files = []
@@ -139,7 +143,7 @@ class MetadataManager:
                     shutil.copy(source_path, dest_path)
                     copied_files.append(file_name)
                     if self.settings.verbose:
-                        print(f"Copied {file_name} from {source_path} to {dest_path}")
+                        logger.info(f"Copied {file_name} from {source_path} to {dest_path}")
                 except Exception as e:
                     raise FileNotFoundError(
                         f"Error copying {file_name} from {source_path} to {dest_path}: {e}"
@@ -147,16 +151,16 @@ class MetadataManager:
             else:
                 missing_files.append(file_name)
                 if self.settings.verbose:
-                    print(
-                        f"Warning: {file_name} not found in {self.settings.input_dir} (searched recursively)"
+                    logger.warning(
+                        f"{file_name} not found in {self.settings.input_dir} (searched recursively)"
                     )
 
         if self.settings.verbose:
-            print(f"Successfully copied {len(copied_files)} ancillary files")
+            logger.info(f"Successfully copied {len(copied_files)} ancillary files")
             if missing_files:
-                print(f"Missing files: {missing_files}")
+                logger.info(f"Missing files: {missing_files}")
             if copied_files:
-                print("Copied files placed in output directory root")
+                logger.info("Copied files placed in output directory root")
 
     def create_derived_data_description(self) -> None:
         """
@@ -169,30 +173,36 @@ class MetadataManager:
         ValueError
             If specified modality is invalid
         """
-        # input_dir is already a Path object
-        data_description_fp = self.settings.input_dir / "data_description.json"
+        # Use recursive search (rglob) to find data_description.json anywhere in the input directory
+        input_path = self.settings.input_dir
+        matching_files = list(input_path.rglob("data_description.json"))
 
-        if not data_description_fp.exists():
-            message = f"data_description.json not found at {data_description_fp}"
+        if not matching_files:
+            message = f"data_description.json not found in {input_path} (searched recursively)"
             if self.settings.verbose:
-                print(f"Warning: {message}")
-                print("Skipping derived data description creation")
-                print(
-                    "To create a derived data description, ensure data_description.json exists in the input directory"
+                logger.warning(message)
+                logger.info("Skipping derived data description creation")
+                logger.info(
+                    "To create a derived data description, ensure data_description.json exists somewhere in the input directory"
                 )
             else:
-                print(f"Note: {message} - skipping derived data description creation")
+                logger.info(f"{message} - skipping derived data description creation")
             return
 
+        # Use the first match found
+        data_description_fp = matching_files[0]
+        
         if self.settings.verbose:
-            print(f"Found data_description.json at {data_description_fp}")
+            logger.info(f"Found data_description.json at {data_description_fp}")
+            if len(matching_files) > 1:
+                logger.info(f"Multiple data_description.json files found, using: {data_description_fp}")
 
         try:
             with open(data_description_fp) as f:
                 data_description = json.load(f)
 
             if self.settings.verbose:
-                print("Successfully loaded data_description.json")
+                logger.info("Successfully loaded data_description.json")
 
             data_description_upgrader = DataDescriptionUpgrade(
                 old_data_description_dict=data_description
@@ -200,19 +210,19 @@ class MetadataManager:
             data_upgrader = data_description_upgrader.upgrade()
 
             if self.settings.verbose:
-                print("Successfully upgraded data description")
+                logger.info("Successfully upgraded data description")
 
             # Apply optional overrides
             if self.settings.data_summary:
                 data_upgrader.data_summary = self.settings.data_summary
                 if self.settings.verbose:
-                    print(f"Set data_summary: {self.settings.data_summary}")
+                    logger.info(f"Set data_summary: {self.settings.data_summary}")
 
             if self.settings.modality:
                 validated_modalities = self._validate_modality(self.settings.modality)
                 data_upgrader.modality = validated_modalities
                 if self.settings.verbose:
-                    print(
+                    logger.info(
                         f"Set modality: {[m.abbreviation for m in validated_modalities]}"
                     )
 
@@ -228,16 +238,15 @@ class MetadataManager:
             )
 
             if self.settings.verbose:
-                print(
+                logger.info(
                     f"✓ Created derived data description at {output_dir_str}/data_description.json"
                 )
 
         except Exception as e:
-            print(f"Error creating derived data description: {e}")
+            logger.error(f"Error creating derived data description: {e}")
             if self.settings.verbose:
                 import traceback
-
-                traceback.print_exc()
+                logger.error(traceback.format_exc())
             raise
 
     def _validate_modality(self, modality_str: str) -> List[Modality]:
@@ -290,11 +299,11 @@ class MetadataManager:
         data_process_files = list(self.settings.input_dir.rglob("*data_process.json"))
 
         if self.settings.verbose:
-            print(f"Found {len(data_process_files)} data_process.json files")
+            logger.info(f"Found {len(data_process_files)} data_process.json files")
 
         for file_path in data_process_files:
             if self.settings.verbose:
-                print(f"Processing: {file_path}")
+                logger.info(f"Processing: {file_path}")
 
             with open(file_path) as f:
                 data_processes.append(DataProcess.model_validate(json.load(f)))
@@ -323,11 +332,11 @@ class MetadataManager:
         )
 
         if self.settings.verbose:
-            print(
+            logger.info(
                 f"Created processing metadata with {len(data_processes)} data processes"
             )
-            print(f"Pipeline version: {self.settings.pipeline_version}")
-            print(f"Processor: {self.settings.processor_full_name}")
+            logger.info(f"Pipeline version: {self.settings.pipeline_version}")
+            logger.info(f"Processor: {self.settings.processor_full_name}")
 
         return processing
 
@@ -344,14 +353,23 @@ def run() -> None:
     """
     try:
         settings = MetadataSettings()
+        
+        # Configure logging based on verbose setting
+        log_level = logging.INFO if settings.verbose else logging.WARNING
+        logging.basicConfig(
+            level=log_level,
+            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+            datefmt='%Y-%m-%d %H:%M:%S'
+        )
+        
         manager = MetadataManager(settings)
 
         if settings.verbose:
-            print("=== Metadata Management Pipeline ===")
-            print(f"Input directory: {settings.input_dir}")
-            print(f"Output directory: {settings.output_dir}")
-            print(f"Processor: {settings.processor_full_name}")
-            print(f"Pipeline version: {settings.pipeline_version}")
+            logger.info("=== Metadata Management Pipeline ===")
+            logger.info(f"Input directory: {settings.input_dir}")
+            logger.info(f"Output directory: {settings.output_dir}")
+            logger.info(f"Processor: {settings.processor_full_name}")
+            logger.info(f"Pipeline version: {settings.pipeline_version}")
 
         # Create main processing metadata
         processing = manager.create_processing_metadata()
@@ -359,7 +377,7 @@ def run() -> None:
         processing.write_standard_file(str(settings.output_dir))
 
         if settings.verbose:
-            print("✓ Written processing.json")
+            logger.info("✓ Written processing.json")
 
         # Copy ancillary files (by default, unless skipped)
         manager.copy_ancillary_files()
@@ -368,24 +386,11 @@ def run() -> None:
         manager.create_derived_data_description()
 
         if settings.verbose:
-            print("=== Pipeline completed successfully ===")
+            logger.info("=== Pipeline completed successfully ===")
 
     except Exception as e:
-        print(f"Error: {e}")
+        logger.error(f"Error: {e}")
         raise
-
-
-# Legacy function stubs for backward compatibility (deprecated)
-def copy_ancillary_files(settings) -> None:
-    """Deprecated: Use MetadataManager.copy_ancillary_files() instead"""
-    manager = MetadataManager(settings)
-    manager.copy_ancillary_files()
-
-
-def create_derived_data_description(settings) -> None:
-    """Deprecated: Use MetadataManager.create_derived_data_description() instead"""
-    manager = MetadataManager(settings)
-    manager.create_derived_data_description()
 
 
 if __name__ == "__main__":
