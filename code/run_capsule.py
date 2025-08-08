@@ -21,13 +21,13 @@ class MetadataSettings(BaseSettings, cli_parse_args=True):
 
     verbose: bool = Field(default=False, description="Print verbose output")
 
-    # Input/Output directories
-    input_dir: str = Field(
-        default="/data",
+    # Input/Output directories - automatically converted to Path objects by BaseSettings
+    input_dir: Path = Field(
+        default=Path("/data"),
         description="Input directory containing data_process.json files",
     )
-    output_dir: str = Field(
-        default="/results",
+    output_dir: Path = Field(
+        default=Path("/results"),
         description="Output directory for processing.json and metadata",
     )
 
@@ -66,9 +66,11 @@ class MetadataSettings(BaseSettings, cli_parse_args=True):
         """Validate processor_full_name is provided or can be read from file"""
         if not v:
             # Try to get input_dir from the validation info context
-            input_dir = info.data.get("input_dir", "/data") if info.data else "/data"
+            input_dir_raw = info.data.get("input_dir", "/data") if info.data else "/data"
+            # Ensure input_dir is a Path object
+            input_dir = Path(input_dir_raw) if not isinstance(input_dir_raw, Path) else input_dir_raw
             try:
-                processor_file = Path(input_dir) / "processor_full_name.txt"
+                processor_file = input_dir / "processor_full_name.txt"
                 if processor_file.exists():
                     return processor_file.read_text().strip()
                 else:
@@ -112,8 +114,9 @@ class MetadataManager:
 
         copied_files = []
         missing_files = []
-        input_path = Path(self.settings.input_dir)
-        output_path = Path(self.settings.output_dir)
+        # input_dir and output_dir are already Path objects
+        input_path = self.settings.input_dir
+        output_path = self.settings.output_dir
 
         for file_name in self.ancillary_files:
             # Use recursive search (rglob) to find the file anywhere in the input directory
@@ -158,7 +161,8 @@ class MetadataManager:
         ValueError
             If specified modality is invalid
         """
-        data_description_fp = Path(self.settings.input_dir) / "data_description.json"
+        # input_dir is already a Path object
+        data_description_fp = self.settings.input_dir / "data_description.json"
 
         if not data_description_fp.exists():
             if self.settings.verbose:
@@ -244,9 +248,8 @@ class MetadataManager:
             List of DataProcess objects found in input directory
         """
         data_processes = []
-        data_process_files = list(
-            Path(self.settings.input_dir).rglob("*data_process.json")
-        )
+        # input_dir is already a Path object
+        data_process_files = list(self.settings.input_dir.rglob("*data_process.json"))
 
         if self.settings.verbose:
             print(f"Found {len(data_process_files)} data_process.json files")
