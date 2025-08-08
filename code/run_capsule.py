@@ -7,9 +7,11 @@ from pathlib import Path
 from typing import List, Optional
 
 from aind_data_schema.core.data_description import DerivedDataDescription
-from aind_data_schema.core.processing import DataProcess, PipelineProcess, Processing
+from aind_data_schema.core.processing import (DataProcess, PipelineProcess,
+                                              Processing)
 from aind_data_schema_models.modalities import Modality
-from aind_metadata_upgrader.data_description_upgrade import DataDescriptionUpgrade
+from aind_metadata_upgrader.data_description_upgrade import \
+    DataDescriptionUpgrade
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings
 
@@ -18,29 +20,30 @@ class MetadataSettings(BaseSettings, cli_parse_args=True):
     """Command line arguments for the metadata management pipeline"""
 
     verbose: bool = Field(default=False, description="Print verbose output")
-    
+
     # Input/Output directories
     input_dir: str = Field(
         default="/data",
         description="Input directory containing data_process.json files",
     )
     output_dir: str = Field(
-        default="/results", description="Output directory for processing.json and metadata"
+        default="/results",
+        description="Output directory for processing.json and metadata",
     )
-    
+
     # Required fields
     processor_full_name: str = Field(
         description="Name of person responsible for processing pipeline"
     )
-    
+
     # Pipeline information with defaults
     pipeline_version: str = Field(
         default_factory=lambda: os.environ.get("VERSION", ""),
-        description="Version of the pipeline (defaults to VERSION env var)"
+        description="Version of the pipeline (defaults to VERSION env var)",
     )
     pipeline_url: str = Field(default="", description="URL to the pipeline code")
     note: str = Field(default="", description="Notes")
-    
+
     # Data description fields
     data_summary: str = Field(
         default="",
@@ -50,20 +53,20 @@ class MetadataSettings(BaseSettings, cli_parse_args=True):
         default="",
         description="Modality to overwrite in the derived data description",
     )
-    
+
     # File management - copy ancillary files by default, with opt-out
     skip_ancillary_files: bool = Field(
         default=False,
-        description="Skip copying ancillary files (procedures.json, subject.json, session.json, rig.json)"
+        description="Skip copying ancillary files (procedures.json, subject.json, session.json, rig.json)",
     )
-    
-    @field_validator('processor_full_name', mode='before')
+
+    @field_validator("processor_full_name", mode="before")
     @classmethod
     def validate_processor_name(cls, v, info):
         """Validate processor_full_name is provided or can be read from file"""
         if not v:
             # Try to get input_dir from the validation info context
-            input_dir = info.data.get('input_dir', '/data') if info.data else '/data'
+            input_dir = info.data.get("input_dir", "/data") if info.data else "/data"
             try:
                 processor_file = Path(input_dir) / "processor_full_name.txt"
                 if processor_file.exists():
@@ -83,11 +86,16 @@ class MetadataSettings(BaseSettings, cli_parse_args=True):
 
 class MetadataManager:
     """Manages processing metadata aggregation and file operations"""
-    
+
     def __init__(self, settings: MetadataSettings):
         self.settings = settings
-        self.ancillary_files = ["procedures.json", "subject.json", "session.json", "rig.json"]
-    
+        self.ancillary_files = [
+            "procedures.json",
+            "subject.json",
+            "session.json",
+            "rig.json",
+        ]
+
     def copy_ancillary_files(self) -> None:
         """
         Copy ancillary files from input_dir to output_dir
@@ -101,14 +109,14 @@ class MetadataManager:
             if self.settings.verbose:
                 print("Skipping ancillary files copy (--skip_ancillary_files=True)")
             return
-        
+
         copied_files = []
         missing_files = []
-        
+
         for file in self.ancillary_files:
             source_path = Path(self.settings.input_dir) / file
             dest_path = Path(self.settings.output_dir) / file
-            
+
             try:
                 if source_path.exists():
                     shutil.copy(source_path, dest_path)
@@ -123,12 +131,12 @@ class MetadataManager:
                 raise FileNotFoundError(
                     f"Error copying {file} from {source_path} to {dest_path}: {e}"
                 )
-        
+
         if self.settings.verbose:
             print(f"Successfully copied {len(copied_files)} ancillary files")
             if missing_files:
                 print(f"Missing files: {missing_files}")
-    
+
     def create_derived_data_description(self) -> None:
         """
         Create a derived data description with optional modality override
@@ -141,26 +149,28 @@ class MetadataManager:
             If specified modality is invalid
         """
         data_description_fp = Path(self.settings.input_dir) / "data_description.json"
-        
+
         if not data_description_fp.exists():
             if self.settings.verbose:
-                print(f"Warning: data_description.json not found at {data_description_fp}")
+                print(
+                    f"Warning: data_description.json not found at {data_description_fp}"
+                )
             return
-        
+
         with open(data_description_fp) as f:
             data_description = json.load(f)
-        
+
         data_description_upgrader = DataDescriptionUpgrade(
             old_data_description_dict=data_description
         )
         data_upgrader = data_description_upgrader.upgrade()
-        
+
         # Apply optional overrides
         if self.settings.data_summary:
             data_upgrader.data_summary = self.settings.data_summary
             if self.settings.verbose:
                 print(f"Set data_summary: {self.settings.data_summary}")
-        
+
         if self.settings.modality:
             validated_modalities = self._validate_modality(self.settings.modality)
             data_upgrader.modality = validated_modalities
@@ -171,25 +181,27 @@ class MetadataManager:
         derived_data_description = DerivedDataDescription.from_data_description(
             data_description=data_upgrader, process_name="processed"
         )
-        derived_data_description.write_standard_file(output_directory=self.settings.output_dir)
-        
+        derived_data_description.write_standard_file(
+            output_directory=self.settings.output_dir
+        )
+
         if self.settings.verbose:
             print("Created derived data description")
-    
+
     def _validate_modality(self, modality_str: str) -> List[Modality]:
         """
         Validate and return modality objects
-        
+
         Parameters
         ----------
         modality_str : str
             Modality abbreviation to validate
-            
+
         Returns
         -------
         List[Modality]
             List of validated modality objects
-            
+
         Raises
         ------
         ValueError
@@ -197,32 +209,34 @@ class MetadataManager:
         """
         validated_modalities = []
         modality_found = False
-        
+
         for modality_class in Modality.ALL:
             if modality_str in modality_class().abbreviation:
                 validated_modalities.append(modality_class())
                 modality_found = True
                 break
-        
+
         if not modality_found:
             raise ValueError(
                 f"Modality '{modality_str}' is not a valid modality. "
                 f"Valid modalities are: {Modality.ONE_OF}"
             )
-        
+
         return validated_modalities
-    
+
     def collect_data_processes(self) -> List[DataProcess]:
         """
         Collect all DataProcess objects from data_process.json files
-        
+
         Returns
         -------
         List[DataProcess]
             List of DataProcess objects found in input directory
         """
         data_processes = []
-        data_process_files = list(Path(self.settings.input_dir).rglob("*data_process.json"))
+        data_process_files = list(
+            Path(self.settings.input_dir).rglob("*data_process.json")
+        )
 
         if self.settings.verbose:
             print(f"Found {len(data_process_files)} data_process.json files")
@@ -235,18 +249,18 @@ class MetadataManager:
                 data_processes.append(DataProcess.model_validate(json.load(f)))
 
         return data_processes
-    
+
     def create_processing_metadata(self) -> Processing:
         """
         Create Processing object with collected data processes
-        
+
         Returns
         -------
         Processing
             Processing object containing all data processes and pipeline info
         """
         data_processes = self.collect_data_processes()
-        
+
         processing = Processing(
             processing_pipeline=PipelineProcess(
                 data_processes=data_processes,
@@ -256,19 +270,21 @@ class MetadataManager:
                 note=self.settings.note,
             )
         )
-        
+
         if self.settings.verbose:
-            print(f"Created processing metadata with {len(data_processes)} data processes")
+            print(
+                f"Created processing metadata with {len(data_processes)} data processes"
+            )
             print(f"Pipeline version: {self.settings.pipeline_version}")
             print(f"Processor: {self.settings.processor_full_name}")
-        
+
         return processing
 
 
 def run() -> None:
     """
     Main function to aggregate processing metadata and manage ancillary files.
-    
+
     This function:
     1. Collects all DataProcess objects from input directory
     2. Creates a Processing object with pipeline metadata
@@ -278,30 +294,30 @@ def run() -> None:
     try:
         settings = MetadataSettings()
         manager = MetadataManager(settings)
-        
+
         if settings.verbose:
             print("=== Metadata Management Pipeline ===")
             print(f"Input directory: {settings.input_dir}")
             print(f"Output directory: {settings.output_dir}")
             print(f"Processor: {settings.processor_full_name}")
             print(f"Pipeline version: {settings.pipeline_version}")
-        
+
         # Create main processing metadata
         processing = manager.create_processing_metadata()
         processing.write_standard_file(settings.output_dir)
-        
+
         if settings.verbose:
             print("✓ Written processing.json")
-        
+
         # Copy ancillary files (by default, unless skipped)
         manager.copy_ancillary_files()
-        
+
         # Always attempt to create derived data description
         manager.create_derived_data_description()
-        
+
         if settings.verbose:
             print("=== Pipeline completed successfully ===")
-            
+
     except Exception as e:
         print(f"Error: {e}")
         raise
