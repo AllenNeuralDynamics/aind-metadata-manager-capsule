@@ -65,7 +65,7 @@ class MetadataSettings(BaseSettings, cli_parse_args=True):
     )
 
     # Quality control options
-    aggregate_quality_control: bool = Field(
+    create_quality_control: bool = Field(
         default=True,
         description="Aggregate quality control evaluations from JSON files",
     )
@@ -479,7 +479,7 @@ def run() -> None:
         manager.create_derived_data_description()
 
         # Create quality control metadata (if enabled and evaluations found)
-        if settings.aggregate_quality_control:
+        if settings.create_quality_control:
             try:
                 quality_control = manager.create_quality_control_metadata()
                 # Only write if we have evaluations
@@ -497,7 +497,7 @@ def run() -> None:
         else:
             if settings.verbose:
                 logger.info(
-                    "Skipping quality control metadata creation (--aggregate_quality_control=False)"
+                    "Skipping quality control metadata creation (--create_quality_control=False)"
                 )
 
         if settings.verbose:
