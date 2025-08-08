@@ -44,7 +44,15 @@
 			"description": "Create quality control json. Defaults to True",
 			"type": "text",
 			"value_type": "string",
-			"default_value": "0"
+			"default_value": "1"
+		},
+		{
+			"id": "nYqP2s3MFLFRjVw1",
+			"name": "verbose",
+			"param_name": "verbose",
+			"type": "text",
+			"value_type": "string",
+			"default_value": "1"
 		}
 	]
 }
