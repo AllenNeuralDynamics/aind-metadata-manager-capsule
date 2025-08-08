@@ -165,42 +165,63 @@ class MetadataManager:
         data_description_fp = self.settings.input_dir / "data_description.json"
 
         if not data_description_fp.exists():
+            message = f"data_description.json not found at {data_description_fp}"
             if self.settings.verbose:
-                print(
-                    f"Warning: data_description.json not found at {data_description_fp}"
-                )
+                print(f"Warning: {message}")
+                print("Skipping derived data description creation")
+                print("To create a derived data description, ensure data_description.json exists in the input directory")
+            else:
+                print(f"Note: {message} - skipping derived data description creation")
             return
 
-        with open(data_description_fp) as f:
-            data_description = json.load(f)
-
-        data_description_upgrader = DataDescriptionUpgrade(
-            old_data_description_dict=data_description
-        )
-        data_upgrader = data_description_upgrader.upgrade()
-
-        # Apply optional overrides
-        if self.settings.data_summary:
-            data_upgrader.data_summary = self.settings.data_summary
-            if self.settings.verbose:
-                print(f"Set data_summary: {self.settings.data_summary}")
-
-        if self.settings.modality:
-            validated_modalities = self._validate_modality(self.settings.modality)
-            data_upgrader.modality = validated_modalities
-            if self.settings.verbose:
-                print(f"Set modality: {[m.abbreviation for m in validated_modalities]}")
-
-        # Create derived data description
-        derived_data_description = DerivedDataDescription.from_data_description(
-            data_description=data_upgrader, process_name="processed"
-        )
-        derived_data_description.write_standard_file(
-            output_directory=self.settings.output_dir
-        )
-
         if self.settings.verbose:
-            print("Created derived data description")
+            print(f"Found data_description.json at {data_description_fp}")
+
+        try:
+            with open(data_description_fp) as f:
+                data_description = json.load(f)
+
+            if self.settings.verbose:
+                print("Successfully loaded data_description.json")
+
+            data_description_upgrader = DataDescriptionUpgrade(
+                old_data_description_dict=data_description
+            )
+            data_upgrader = data_description_upgrader.upgrade()
+
+            if self.settings.verbose:
+                print("Successfully upgraded data description")
+
+            # Apply optional overrides
+            if self.settings.data_summary:
+                data_upgrader.data_summary = self.settings.data_summary
+                if self.settings.verbose:
+                    print(f"Set data_summary: {self.settings.data_summary}")
+
+            if self.settings.modality:
+                validated_modalities = self._validate_modality(self.settings.modality)
+                data_upgrader.modality = validated_modalities
+                if self.settings.verbose:
+                    print(f"Set modality: {[m.abbreviation for m in validated_modalities]}")
+
+            # Create derived data description
+            derived_data_description = DerivedDataDescription.from_data_description(
+                data_description=data_upgrader, process_name="processed"
+            )
+            
+            # Ensure output_directory is a string for the API call
+            output_dir_str = str(self.settings.output_dir)
+            derived_data_description.write_standard_file(output_directory=output_dir_str)
+
+            if self.settings.verbose:
+                print(f"✓ Created derived data description at {output_dir_str}/data_description.json")
+        
+        except Exception as e:
+            print(f"Error creating derived data description: {e}")
+            if self.settings.verbose:
+                import traceback
+                traceback.print_exc()
+            raise
 
     def _validate_modality(self, modality_str: str) -> List[Modality]:
         """
@@ -317,7 +338,8 @@ def run() -> None:
 
         # Create main processing metadata
         processing = manager.create_processing_metadata()
-        processing.write_standard_file(settings.output_dir)
+        # Ensure output_dir is a string for the API call
+        processing.write_standard_file(str(settings.output_dir))
 
         if settings.verbose:
             print("✓ Written processing.json")
