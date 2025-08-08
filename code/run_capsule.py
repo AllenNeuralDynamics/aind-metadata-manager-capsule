@@ -47,7 +47,6 @@ class MetadataSettings(BaseSettings, cli_parse_args=True):
         description="Version of the pipeline (defaults to VERSION env var)",
     )
     pipeline_url: str = Field(default="", description="URL to the pipeline code")
-    note: str = Field(default="", description="Notes")
 
     # Data description fields
     data_summary: str = Field(
@@ -69,10 +68,6 @@ class MetadataSettings(BaseSettings, cli_parse_args=True):
     aggregate_quality_control: bool = Field(
         default=True,
         description="Aggregate quality control evaluations from JSON files",
-    )
-    qc_notes: str = Field(
-        default="",
-        description="Notes to include in the quality control metadata",
     )
 
     @field_validator("processor_full_name", mode="before")
@@ -345,7 +340,6 @@ class MetadataManager:
                 processor_full_name=self.settings.processor_full_name,
                 pipeline_version=self.settings.pipeline_version,
                 pipeline_url=self.settings.pipeline_url,
-                note=self.settings.note,
             )
         )
 
@@ -429,16 +423,12 @@ class MetadataManager:
         """
         evaluations = self.collect_evaluations()
 
-        quality_control = QualityControl(
-            evaluations=evaluations, notes=self.settings.qc_notes
-        )
+        quality_control = QualityControl(evaluations=evaluations)
 
         if self.settings.verbose:
             logger.info(
                 f"Created quality control metadata with {len(evaluations)} evaluations"
             )
-            if self.settings.qc_notes:
-                logger.info(f"Notes: {self.settings.qc_notes}")
 
         return quality_control
 
