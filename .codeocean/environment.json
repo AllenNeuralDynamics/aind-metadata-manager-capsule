@@ -1,0 +1,20 @@
+{
+	"version": 1,
+	"base_image": "codeocean/mambaforge3:24.5.0-0-python3.12.4-ubuntu22.04",
+	"options": {
+		"registry_host_arg": true,
+		"git_ask_pass": true
+	},
+	"installers": {
+		"pip": {
+			"packages": [
+				{
+					"name": "git+https://github.com/AllenNeuralDynamics/aind-metadata-manager#egg=aind-metadata-manager",
+					"version": "f519434a0e76581b0ab67bb555115c838b918857"
+				}
+			],
+			"options": {},
+			"pre_install_options": {}
+		}
+	}
+}
