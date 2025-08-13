@@ -9,11 +9,7 @@ ARG GIT_ACCESS_TOKEN
 COPY git-askpass /
 
 RUN pip3 install -U --no-cache-dir \
-    aind-data-schema==1.2.0 \
-    aind-data-schema-models==0.7.5 \
-    aind-metadata-upgrader==0.0.24 \
-    pydantic==2.10.6 \
-    pydantic-settings==2.8.1
+    git+https://github.com/AllenNeuralDynamics/aind-metadata-manager#egg=aind-metadata-manager
 
 ADD "https://github.com/coder/code-server/releases/download/v4.95.3/code-server-4.95.3-linux-amd64.tar.gz" /.code-server/code-server.tar.gz
 	
