@@ -39,11 +39,11 @@
 		},
 		{
 			"id": "0qRtnETvgbJh7x8X",
-			"name": "create_quality_control",
-			"param_name": "create_quality_control",
+			"name": "aggregate_quality_control",
+			"param_name": "aggregate_quality_control",
 			"description": "Create quality control json. Defaults to True",
 			"type": "text",
-			"value_type": "string",
+			"value_type": "integer",
 			"default_value": "1"
 		},
 		{
