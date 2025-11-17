@@ -1,4 +1,4 @@
-# hash:sha256:0013a735c5310f5514ad6197d6e809b78402480393397c176bda71fdc36fab65
+# hash:sha256:214a87094dbde1941e5775d0048f77c279ea3c04479e24e0e8902fbfd5f1d055
 ARG REGISTRY_HOST
 FROM $REGISTRY_HOST/codeocean/mambaforge3:24.5.0-0-python3.12.4-ubuntu22.04
 
@@ -9,4 +9,4 @@ COPY git-askpass /
 RUN --mount=type=secret,id=git-access-token \
     GIT_ACCESS_TOKEN="$(cat /run/secrets/git-access-token)" \
     pip install -U --no-cache-dir \
-    -e git+https://github.com/AllenNeuralDynamics/aind-metadata-manager@2cea55f4add6678a6a8513f144936d4c44815cc7#egg=aind-metadata-manager
+    -e git+https://github.com/AllenNeuralDynamics/aind-metadata-manager.git@d5d8f56cbf480c3eefcf7f63be7ff845f0605ddc#egg=aind-metadata-manager
