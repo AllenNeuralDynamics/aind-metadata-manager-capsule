@@ -1,5 +1,5 @@
 metadata_version: 1
-name: aind-pipeline-processing-metadata-aggregator
+name: aind-pipeline-processing-metadata-aggregator_2.0
 description: Aggregator to create a single processing.json for a pipeline. Takes serialized
   DataProcess objects as input.
 authors:
