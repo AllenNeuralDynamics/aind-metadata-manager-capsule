@@ -36,11 +36,11 @@
 			"id": "ZfAbfn5Xm9DVAAW2",
 			"name": "processor_full_name",
 			"param_name": "processor_full_name",
-			"description": "Name of person responsible for processing pipeline",
-			"help_text": "Name of person responsible for processing pipeline",
+			"description": "Name of person responsible for processing pipeline (defaults to input_dir/processor_full_name.txt)",
+			"help_text": "Name of person responsible for processing pipeline (defaults to input_dir/processor_full_name.txt)",
 			"type": "text",
 			"value_type": "string",
-			"pattern": "^(?:[^\\s\"'$\u0026|;`\u003c\u003e(){}[\\]\\\\]+|\"[^\"]*\"|'[^']*')$"
+			"pattern": "^(?:[^\\\\s\\\"'$\u0026|;`\u003c\u003e(){}[\\\\]\\\\\\\\]+|\\\"[^\\\"]*\\\"|'[^']*')$"
 		},
 		{
 			"id": "x1W5LCVtEVgXEe01",
@@ -55,8 +55,8 @@
 			"id": "xCxIcv8FEsutYajo",
 			"name": "pipeline_url",
 			"param_name": "pipeline_url",
-			"description": "URL to the pipeline code",
-			"help_text": "URL to the pipeline code",
+			"description": "URL to the pipeline code (defaults to PIPELINE_URL env var)",
+			"help_text": "URL to the pipeline code (defaults to PIPELINE_URL env var)",
 			"type": "text",
 			"value_type": "string"
 		},
@@ -68,7 +68,7 @@
 			"help_text": "Name of the pipeline",
 			"type": "text",
 			"value_type": "string",
-			"pattern": "^(?:[^\\s\"'$\u0026|;`\u003c\u003e(){}[\\]\\\\]+|\"[^\"]*\"|'[^']*')$"
+			"pattern": "^(?:[^\\\\s\\\"'$\u0026|;`\u003c\u003e(){}[\\\\]\\\\\\\\]+|\\\"[^\\\"]*\\\"|'[^']*')$"
 		},
 		{
 			"id": "88Ft6xo7CsrdRa0y",
@@ -78,7 +78,7 @@
 			"help_text": "Data summary to overwrite in the             derived data description",
 			"type": "text",
 			"value_type": "string",
-			"pattern": "^(?:[^\\s\"'$\u0026|;`\u003c\u003e(){}[\\]\\\\]+|\"[^\"]*\"|'[^']*')$"
+			"pattern": "^(?:[^\\\\s\\\"'$\u0026|;`\u003c\u003e(){}[\\\\]\\\\\\\\]+|\\\"[^\\\"]*\\\"|'[^']*')$"
 		},
 		{
 			"id": "xdpuEvRVBWd7n0Ri",
