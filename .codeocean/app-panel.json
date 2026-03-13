@@ -39,8 +39,7 @@
 			"description": "Name of person responsible for processing pipeline (defaults to input_dir/processor_full_name.txt)",
 			"help_text": "Name of person responsible for processing pipeline (defaults to input_dir/processor_full_name.txt)",
 			"type": "text",
-			"value_type": "string",
-			"pattern": "^(?:[^\\\\s\\\"'$\u0026|;`\u003c\u003e(){}[\\\\]\\\\\\\\]+|\\\"[^\\\"]*\\\"|'[^']*')$"
+			"value_type": "string"
 		},
 		{
 			"id": "x1W5LCVtEVgXEe01",
@@ -49,7 +48,8 @@
 			"description": "Version of the pipeline             (defaults to PIPELINE_VERSION env var)",
 			"help_text": "Version of the pipeline             (defaults to PIPELINE_VERSION env var)",
 			"type": "text",
-			"value_type": "string"
+			"value_type": "string",
+			"default_value": ""
 		},
 		{
 			"id": "xCxIcv8FEsutYajo",
@@ -68,7 +68,7 @@
 			"help_text": "Name of the pipeline",
 			"type": "text",
 			"value_type": "string",
-			"pattern": "^(?:[^\\\\s\\\"'$\u0026|;`\u003c\u003e(){}[\\\\]\\\\\\\\]+|\\\"[^\\\"]*\\\"|'[^']*')$"
+			"default_value": ""
 		},
 		{
 			"id": "88Ft6xo7CsrdRa0y",
@@ -78,7 +78,7 @@
 			"help_text": "Data summary to overwrite in the             derived data description",
 			"type": "text",
 			"value_type": "string",
-			"pattern": "^(?:[^\\\\s\\\"'$\u0026|;`\u003c\u003e(){}[\\\\]\\\\\\\\]+|\\\"[^\\\"]*\\\"|'[^']*')$"
+			"default_value": ""
 		},
 		{
 			"id": "xdpuEvRVBWd7n0Ri",
@@ -87,7 +87,8 @@
 			"description": "Modality to overwrite in the derived data description",
 			"help_text": "Modality to overwrite in the derived data description",
 			"type": "text",
-			"value_type": "string"
+			"value_type": "string",
+			"default_value": ""
 		},
 		{
 			"id": "COM8gYcuX8LcP37E",
