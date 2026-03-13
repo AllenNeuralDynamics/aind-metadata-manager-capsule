@@ -3,7 +3,7 @@ name: Sync App Panel
 on:
   push:
     branches:
-      - main
+      - $default-branch
   workflow_dispatch:
 
 jobs:
@@ -31,8 +31,9 @@ jobs:
               print(f\"{pkg['name']}=={pkg['version']}\")
           ")
 
-      # Configure: set path relative to site-packages to the python module with arg definitions
-      # e.g. "$SITE/aind_metadata_manager/metadata_manager.py"
+      # Configure: set SOURCE to the module containing your BaseSettings/argparse class
+      #   EG: local file:      "code/run_capsule.py"
+      #   EG: installed package: "my_package/settings.py" (gets resolved from site-packages)
       # --strategy [overwrite|preserve] - Merge strategy (default: preserve)
       #   overwrite: Updates parameter values from code, preserves existing descriptions
       #   preserve: Keeps all existing values, only adds new parameters
@@ -40,9 +41,15 @@ jobs:
       # https://pypi.org/project/auto-app-panel/
       - name: Run auto-app-panel
         run: |
-          SITE=$(python -c "import sysconfig; print(sysconfig.get_path('purelib'))")
+          SOURCE="aind_metadata_manager/metadata_manager.py"
+          if [ -f "$SOURCE" ]; then
+            TARGET="$SOURCE"
+          else
+            SITE=$(python -c "import sysconfig; print(sysconfig.get_path('purelib'))")
+            TARGET="$SITE/$SOURCE"
+          fi
           auto-app-panel \
-            "$SITE/aind_metadata_manager/metadata_manager.py" \
+            "$TARGET" \
             .codeocean/app-panel.json \
             --strategy preserve \
             --no-backup
