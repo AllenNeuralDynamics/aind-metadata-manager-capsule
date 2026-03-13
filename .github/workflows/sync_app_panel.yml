@@ -1,0 +1,57 @@
+name: Sync App Panel
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  sync-app-panel:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout capsule repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install library from environment.json
+        run: |
+          pip install auto-app-panel
+          pip install $(python -c "
+          import json
+          env = json.load(open('.codeocean/environment.json'))
+          for pkg in env['installers']['pip']['packages']:
+              print(f\"{pkg['name']}=={pkg['version']}\")
+          ")
+
+      # Configure: set path relative to site-packages to the python module with arg definitions
+      # e.g. "$SITE/aind_metadata_manager/metadata_manager.py"
+      # --strategy [overwrite|preserve] - Merge strategy (default: preserve)
+      #   overwrite: Updates parameter values from code, preserves existing descriptions
+      #   preserve: Keeps all existing values, only adds new parameters
+      # --no-backup - Skip creating timestamped backup of existing file
+      # https://pypi.org/project/auto-app-panel/
+      - name: Run auto-app-panel
+        run: |
+          SITE=$(python -c "import sysconfig; print(sysconfig.get_path('purelib'))")
+          auto-app-panel \
+            "$SITE/aind_metadata_manager/metadata_manager.py" \
+            .codeocean/app-panel.json \
+            --strategy preserve \
+            --no-backup
+
+      - name: Commit changes (if any)
+        run: |
+          git diff --quiet .codeocean/app-panel.json && exit 0
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .codeocean/app-panel.json
+          git commit -m "ci: sync app-panel.json [skip actions]"
+          git push
