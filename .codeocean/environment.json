@@ -10,7 +10,7 @@
 		"pip": {
 			"packages": [
 				{
-					"name": "git+https://github.com/AllenNeuralDynamics/aind-metadata-manager.git@a891e2c#egg=aind-metadata-manager"
+					"name": "git+https://github.com/AllenNeuralDynamics/aind-metadata-manager.git@v0.3.0#egg=aind-metadata-manager"
 				}
 			],
 			"options": {},

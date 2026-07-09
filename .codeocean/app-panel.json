@@ -39,24 +39,24 @@
 			"description": "Name of person responsible for processing pipeline (defaults to input_dir/processor_full_name.txt)",
 			"help_text": "Name of person responsible for processing pipeline (defaults to input_dir/processor_full_name.txt)",
 			"type": "text",
-			"value_type": "string"
+			"value_type": "string",
+			"required": true
 		},
 		{
 			"id": "x1W5LCVtEVgXEe01",
 			"name": "pipeline_version",
 			"param_name": "pipeline_version",
-			"description": "Version of the pipeline             (defaults to PIPELINE_VERSION env var)",
-			"help_text": "Version of the pipeline             (defaults to PIPELINE_VERSION env var)",
+			"description": "Version of the pipeline. Falls back to PIPELINE_VERSION env var. Optional.",
+			"help_text": "Version of the pipeline. Falls back to PIPELINE_VERSION env var. Optional.",
 			"type": "text",
-			"value_type": "string",
-			"default_value": ""
+			"value_type": "string"
 		},
 		{
 			"id": "xCxIcv8FEsutYajo",
 			"name": "pipeline_url",
 			"param_name": "pipeline_url",
-			"description": "URL to the pipeline code (defaults to PIPELINE_URL env var)",
-			"help_text": "URL to the pipeline code (defaults to PIPELINE_URL env var)",
+			"description": "URL to the pipeline code. Falls back to PIPELINE_URL env var. Required — fails if neither is provided.",
+			"help_text": "URL to the pipeline code. Falls back to PIPELINE_URL env var. Required — fails if neither is provided.",
 			"type": "text",
 			"value_type": "string"
 		},
@@ -64,11 +64,10 @@
 			"id": "qC3QJ1R3822s3z1X",
 			"name": "pipeline_name",
 			"param_name": "pipeline_name",
-			"description": "Name of the pipeline (defaults to PIPELINE_NAME env var)",
-			"help_text": "Name of the pipeline (defaults to PIPELINE_NAME env var)",
+			"description": "Name of the pipeline (used on all data processes). Falls back to PIPELINE_NAME env var. Optional.",
+			"help_text": "Name of the pipeline (used on all data processes). Falls back to PIPELINE_NAME env var. Optional.",
 			"type": "text",
-			"value_type": "string",
-			"default_value": ""
+			"value_type": "string"
 		},
 		{
 			"id": "88Ft6xo7CsrdRa0y",
@@ -77,8 +76,7 @@
 			"description": "Data summary to overwrite in the             derived data description",
 			"help_text": "Data summary to overwrite in the             derived data description",
 			"type": "text",
-			"value_type": "string",
-			"default_value": ""
+			"value_type": "string"
 		},
 		{
 			"id": "xdpuEvRVBWd7n0Ri",
@@ -87,8 +85,17 @@
 			"description": "Modality to overwrite in the derived data description",
 			"help_text": "Modality to overwrite in the derived data description",
 			"type": "text",
+			"value_type": "string"
+		},
+		{
+			"id": "OENPe7wyaFafx0j7",
+			"name": "process_name",
+			"param_name": "process_name",
+			"description": "Process name to use when creating the derived data description",
+			"help_text": "Process name to use when creating the derived data description",
+			"type": "text",
 			"value_type": "string",
-			"default_value": ""
+			"default_value": "processed"
 		},
 		{
 			"id": "COM8gYcuX8LcP37E",
