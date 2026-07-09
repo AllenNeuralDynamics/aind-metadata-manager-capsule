@@ -1,4 +1,4 @@
-# aind-pipeline-processing-metadata-aggregator
+# aind-metadata-manager-capsule
 
 ## Usage
 This capsule searches and input directory (default '/data') for serialized DataProcess objects named '*data_process.json'.
