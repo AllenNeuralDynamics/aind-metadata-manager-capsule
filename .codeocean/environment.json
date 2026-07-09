@@ -10,12 +10,7 @@
 		"pip": {
 			"packages": [
 				{
-					"name": "aind-metadata-manager",
-					"version": "0.1.2"
-				},
-				{
-					"name": "auto-app-panel",
-					"version": "0.1.3"
+					"name": "git+https://github.com/AllenNeuralDynamics/aind-metadata-manager.git@a891e2c#egg=aind-metadata-manager"
 				}
 			],
 			"options": {},

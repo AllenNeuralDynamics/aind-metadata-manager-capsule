@@ -64,8 +64,8 @@
 			"id": "qC3QJ1R3822s3z1X",
 			"name": "pipeline_name",
 			"param_name": "pipeline_name",
-			"description": "Name of the pipeline",
-			"help_text": "Name of the pipeline",
+			"description": "Name of the pipeline (defaults to PIPELINE_NAME env var)",
+			"help_text": "Name of the pipeline (defaults to PIPELINE_NAME env var)",
 			"type": "text",
 			"value_type": "string",
 			"default_value": ""

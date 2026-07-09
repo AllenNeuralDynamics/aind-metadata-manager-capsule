@@ -1,0 +1,114 @@
+{
+	"version": 1,
+	"named_parameters": true,
+	"parameters": [
+		{
+			"id": "nYqP2s3MFLFRjVw1",
+			"name": "verbose",
+			"param_name": "verbose",
+			"description": "Print verbose output",
+			"help_text": "Print verbose output",
+			"type": "text",
+			"value_type": "integer",
+			"default_value": "0"
+		},
+		{
+			"id": "rWanCHwS81ttLJlQ",
+			"name": "input_dir",
+			"param_name": "input_dir",
+			"description": "Input directory containing data_process.json files",
+			"help_text": "Input directory containing data_process.json files",
+			"type": "text",
+			"value_type": "string",
+			"default_value": "/data"
+		},
+		{
+			"id": "icZqCOoE4vs8OsPC",
+			"name": "output_dir",
+			"param_name": "output_dir",
+			"description": "Output directory for processing.json and metadata",
+			"help_text": "Output directory for processing.json and metadata",
+			"type": "text",
+			"value_type": "string",
+			"default_value": "/results"
+		},
+		{
+			"id": "ZfAbfn5Xm9DVAAW2",
+			"name": "processor_full_name",
+			"param_name": "processor_full_name",
+			"description": "Name of person responsible for processing pipeline (defaults to input_dir/processor_full_name.txt)",
+			"help_text": "Name of person responsible for processing pipeline (defaults to input_dir/processor_full_name.txt)",
+			"type": "text",
+			"value_type": "string"
+		},
+		{
+			"id": "x1W5LCVtEVgXEe01",
+			"name": "pipeline_version",
+			"param_name": "pipeline_version",
+			"description": "Version of the pipeline             (defaults to PIPELINE_VERSION env var)",
+			"help_text": "Version of the pipeline             (defaults to PIPELINE_VERSION env var)",
+			"type": "text",
+			"value_type": "string",
+			"default_value": ""
+		},
+		{
+			"id": "xCxIcv8FEsutYajo",
+			"name": "pipeline_url",
+			"param_name": "pipeline_url",
+			"description": "URL to the pipeline code (defaults to PIPELINE_URL env var)",
+			"help_text": "URL to the pipeline code (defaults to PIPELINE_URL env var)",
+			"type": "text",
+			"value_type": "string"
+		},
+		{
+			"id": "qC3QJ1R3822s3z1X",
+			"name": "pipeline_name",
+			"param_name": "pipeline_name",
+			"description": "Name of the pipeline",
+			"help_text": "Name of the pipeline",
+			"type": "text",
+			"value_type": "string",
+			"default_value": ""
+		},
+		{
+			"id": "88Ft6xo7CsrdRa0y",
+			"name": "data_summary",
+			"param_name": "data_summary",
+			"description": "Data summary to overwrite in the             derived data description",
+			"help_text": "Data summary to overwrite in the             derived data description",
+			"type": "text",
+			"value_type": "string",
+			"default_value": ""
+		},
+		{
+			"id": "xdpuEvRVBWd7n0Ri",
+			"name": "modality",
+			"param_name": "modality",
+			"description": "Modality to overwrite in the derived data description",
+			"help_text": "Modality to overwrite in the derived data description",
+			"type": "text",
+			"value_type": "string",
+			"default_value": ""
+		},
+		{
+			"id": "COM8gYcuX8LcP37E",
+			"name": "skip_ancillary_files",
+			"param_name": "skip_ancillary_files",
+			"description": "Skip copying ancillary files             (procedures.json, subject.json, session.json, rig.json,             instrument.json, and acquisition.json)",
+			"help_text": "Skip copying ancillary files             (procedures.json, subject.json, session.json, rig.json,             instrument.json, and acquisition.json)",
+			"type": "text",
+			"value_type": "integer",
+			"default_value": "0"
+		},
+		{
+			"id": "0qRtnETvgbJh7x8X",
+			"name": "aggregate_quality_control",
+			"param_name": "aggregate_quality_control",
+			"description": "Aggregate quality control evaluations from JSON files",
+			"help_text": "Aggregate quality control evaluations from JSON files",
+			"type": "text",
+			"value_type": "integer",
+			"default_value": "1"
+		}
+	]
+}
