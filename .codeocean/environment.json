@@ -11,6 +11,14 @@
 			"packages": [
 				{
 					"name": "git+https://github.com/AllenNeuralDynamics/aind-metadata-manager.git@v0.3.3#egg=aind-metadata-manager"
+				},
+				{
+					"name": "log-schema",
+					"version": "0.2.10.dev1"
+				},
+				{
+					"name": "watchtower",
+					"version": "3.4.0"
 				}
 			],
 			"options": {},
