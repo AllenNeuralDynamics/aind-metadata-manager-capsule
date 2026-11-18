@@ -1,4 +1,4 @@
-# hash:sha256:75f67a36dd16a9b83b1bff2a391ce6829a0d39fff0054f30899b96c67e266a05
+# hash:sha256:bbb41dd902b4f7b9f75f1debdaa6270572761f4f6d9ddb4a34dc4b84ade10b79
 ARG REGISTRY_HOST
 FROM $REGISTRY_HOST/codeocean/mambaforge3:24.5.0-0-python3.12.4-ubuntu22.04
 
@@ -11,4 +11,4 @@ RUN --mount=type=secret,id=git-access-token \
     pip install -U --no-cache-dir \
     log-schema==0.2.10.dev1 \
     watchtower==3.4.0 \
-    -e git+https://github.com/AllenNeuralDynamics/aind-metadata-manager.git@v0.3.4#egg=aind-metadata-manager
+    -e git+https://github.com/AllenNeuralDynamics/aind-metadata-manager.git@v0.3.5#egg=aind-metadata-manager
